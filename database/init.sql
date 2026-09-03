@@ -35,3 +35,24 @@ CREATE TABLE alerts (
     FOREIGN KEY (device_id)
         REFERENCES devices(device_id)
 )
+
+
+--{
+--  "device_id": "vent-001",
+--  "timestamp": "2026-09-03T10:30:00Z",
+--  "temperature": 22.4,
+--  "humidity": 45.8,
+--  "fan_speed_setting": 72,
+--  "fan_speed_rpm": 1450, (denna om sacharias hittar sin fläkt)
+--  "fan_status": "running"
+--  "health_status": "HEALTHY
+--}
+
+
+--Kör såhär
+--temperature NUMERIC(5,2),
+--humidity NUMERIC(5,2),
+--fan_speed_setting INTEGER,
+--fan_speed_rpm INTEGER,
+--fan_status VARCHAR(20),
+--health_status VARCHAR(20)
