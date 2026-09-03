@@ -2,8 +2,10 @@ from flask import Flask, jsonify
 import os
 import socket
 
-from db import get_connection
-
+from db import( 
+    get_connection,
+    get_devices,
+)
 app = Flask(__name__)
 
 APP_VERSION = os.getenv("APP_VERSION", "v1")
@@ -25,6 +27,9 @@ def health():
         "database": "unavailable"        
         }), 503
 
+@app.get("/devices")
+def devices():
+    return jsonify(get_devices()), 200
 
 
 if __name__ == "__main__":
