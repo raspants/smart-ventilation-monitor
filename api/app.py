@@ -5,6 +5,7 @@ import socket
 from db import( 
     get_connection,
     get_devices,
+    get_latest_measurement,
 )
 app = Flask(__name__)
 
@@ -30,6 +31,21 @@ def health():
 @app.get("/devices")
 def devices():
     return jsonify(get_devices()), 200
+
+
+@app.get("/devices/<device_id>/latest")
+def latest(device_id):
+
+    #if not device_exists(device_id):
+    #    return jsonify({"error": "unknown device"}), 404
+
+    measurement = get_latest_measurement(device_id)
+
+    if measurement is None:
+        return jsonify({"error": "Measurement not found"}), 404
+
+    return jsonify(measurement), 200
+
 
 
 if __name__ == "__main__":

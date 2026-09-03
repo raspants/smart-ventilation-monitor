@@ -23,3 +23,28 @@ def get_devices():
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(query)
             return [dict(row) for row in cur.fetchall()]
+
+def get_latest_measurement(device_id):
+    query = """
+    SELECT device_id,
+        temperature,
+        humidity,
+        fan_speed_setting,
+        fan_speed_rpm,
+        fan_status,
+        health_status
+    FROM measurements
+    WHERE device_id = %s
+    ORDER BY created_at DESC
+    LIMIT 1;
+    """
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(query, (device_id,))
+            
+            row = cur.fetchone()
+
+            if row is not None:
+                return dict(row)
+            
+            return None
