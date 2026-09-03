@@ -13,6 +13,19 @@ def get_connection():
         password=os.getenv("DB_PASSWORD", "admin"),
     )
 
+def known_device(device_id):
+    query = """
+    SELECT 1
+    FROM devices
+    WHERE device_id = %s
+    LIMIT 1
+    """    
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(query, (device_id,))
+            return cur.fetchone() is not None
+    
+
 def get_devices():
     query = """
     SELECT device_id, status

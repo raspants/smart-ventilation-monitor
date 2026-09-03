@@ -36,8 +36,8 @@ def devices():
 @app.get("/devices/<device_id>/latest")
 def latest(device_id):
 
-    #if not device_exists(device_id):
-    #    return jsonify({"error": "unknown device"}), 404
+    if not known_device(device_id):
+        return jsonify({"error": "unknown device"}), 404
 
     measurement = get_latest_measurement(device_id)
 
