@@ -7,18 +7,24 @@ MQTT_TOPIC = os.getenv("MQTT_TOPIC", "smartvent/+/telemetry")
 
 def on_connect(client, userdata, flags, reason_code, properties):
     if reason_code == 0:
-        print(f"Connected to MQTT broker at {MQTT_HOST}:{MQTT_PORT}")
+        print(
+            f"Connected to MQTT broker at {MQTT_HOST}:{MQTT_PORT}",
+            flush=True
+        )
+        
         client.subscribe(MQTT_TOPIC)
-        print(f"Subscribed to {MQTT_TOPIC}")
+
+        print(f"Subscribed to {MQTT_TOPIC}", flush=True)
+
     else:
-        print(f"MQTT connection failed: {reason_code}")
+        print(f"MQTT connection failed: {reason_code}", flush=True)
 
 def on_message(client, userdata, message):
     payload = message.payload.decode("utf-8")
 
-    print(f"MQTT message received")
-    print(f"Topic: {message.topic}")
-    print(f"Payload: {payload}")
+    print(f"MQTT message received", flush=True)
+    print(f"Topic: {message.topic}", flush=True)
+    print(f"Payload: {payload}", flush=True)
 
 def start_mqtt():
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
