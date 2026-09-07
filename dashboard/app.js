@@ -12,7 +12,17 @@ fetch("http://localhost:5001/devices")
             const unit = document.createElement("li");
             unit.textContent = device.device_id;
             unit.addEventListener("click", () => {
-            selectedUnit.textContent = device.device_id;
+                fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
+                    .then(response => response.json())
+                    .then(measurement => {
+                        selectedUnit.textContent = 
+                        `Temperature: ${measurement.temperature} °C
+                         Humidity: ${measurement.humidity} %
+                         Fan RPM: ${measurement.fan_speed_rpm}
+                         Fan Speed: ${measurement.fan_speed_setting} 
+                         Fan status: ${measurement.fan_status} 
+                         Health status: ${measurement.health_status} `
+                    });
             });
             
             const health = document.createElement("span")
