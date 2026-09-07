@@ -1,5 +1,8 @@
 import os
 import paho.mqtt.client as mqtt
+import json
+from validation import validate_telemetry
+
 
 MQTT_HOST = os.getenv("MQTT_HOST", "broker")
 MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
@@ -25,6 +28,23 @@ def on_message(client, userdata, message):
     print(f"MQTT message received", flush=True)
     print(f"Topic: {message.topic}", flush=True)
     print(f"Payload: {payload}", flush=True)
+
+    try:
+        data = json.loads(payload)
+        print(f"Parsed telemetry: {data}", flush=True)
+
+    except json.JSONDecodeError:
+        print("Invalid JSON payload", flush=True)
+        return
+
+    errors = validate_telemetry(data)
+
+    if errors:
+        print(f"Invalid telemetry: {errors}", flush=True)
+        return
+
+    print("Telemetry validated successfully", flush=True)
+    
 
 def start_mqtt():
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
