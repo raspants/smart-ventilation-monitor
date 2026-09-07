@@ -31,9 +31,9 @@ services:
       DB_USER: ${POSTGRES_USER:-admin}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-admin}
       APP_VERSION: v1
-      MQTT_HOST: ${MQTT_HOST}
-      MQTT_PORT: ${MQTT_PORT}
-      MQTT_TOPIC: ${MQTT_TOPIC}
+      MQTT_HOST: ${MQTT_HOST:-broker}
+      MQTT_PORT: ${MQTT_PORT:-1883}
+      MQTT_TOPIC: ${MQTT_TOPIC:-smartvent/+/telemetry}
     ports:
       - "${API_PORT:-5001}:5000"
     depends_on:
