@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import os
 import socket
 
@@ -6,8 +7,11 @@ from db import(
     get_connection,
     get_devices,
     get_latest_measurement,
+    get_measurements,
+    known_device,
 )
 app = Flask(__name__)
+CORS(app)
 
 APP_VERSION = os.getenv("APP_VERSION", "v1")
 POD_NAME = socket.gethostname()
@@ -45,6 +49,17 @@ def latest(device_id):
         return jsonify({"error": "Measurement not found"}), 404
 
     return jsonify(measurement), 200
+
+
+@app.get("/devices/<device_id>/measurements") #adjust to be callable with amount of time
+def measurements(device_id):
+
+    if not known_device(device_id):
+        return jsonify({"error": "unknown device"}), 404
+
+    measurements = get_measurements(device_id)
+
+    return jsonify(measurements), 200
 
 
 
