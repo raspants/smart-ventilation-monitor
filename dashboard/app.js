@@ -15,13 +15,15 @@ fetch("http://localhost:5001/devices")
                 fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
                     .then(response => response.json())
                     .then(measurement => {
+                        const healthClass = measurement.health_status.toLowerCase();
+                        const fanClass = measurement.fan_status.toLowerCase();
                         selectedUnit.innerHTML = `
-                        <p>Health status: ${measurement.health_status}</P> 
-                        <p>Temperature: ${measurement.temperature} °C</P>
-                        <p>Humidity: ${measurement.humidity} %</P>
-                        <p>Fan RPM: ${measurement.fan_speed_rpm}</P>
-                        <p>Fan Speed: ${measurement.fan_speed_setting}</P> 
-                        <p>Fan status: ${measurement.fan_status}</P>
+                        <p class="health-status ${healthClass}">Health status: ${measurement.health_status}</p> 
+                        <p class="fan-status ${fanClass}">Fan status: ${measurement.fan_status}</p>
+                        <p>Temperature: ${measurement.temperature} °C</p>
+                        <p>Humidity: ${measurement.humidity} %</p>
+                        <p>Fan RPM: ${measurement.fan_speed_rpm}</p>
+                        <p>Fan Speed: ${measurement.fan_speed_setting}</p> 
                         `
                     });
             });

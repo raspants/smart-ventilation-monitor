@@ -45,3 +45,46 @@ section:first-child li:hover {
 section:first-child li span {
     margin-left: 10px;
 }
+
+#selected-unit p {
+    margin: 10px;
+    font-size: 16px;
+}
+
+#selected-unit {
+    padding: 10px;
+}
+
+.health-status {
+    font-weight: bold;
+}
+
+.health-status.healthy {
+    color: green;
+}
+
+.health-status.warning {
+    color: yellow;
+}
+
+.health-status.critical {
+    color: red;
+}
+
+.health-status.offline {
+    color: gray;
+}
+
+.fan-status {
+    font-weight: bold;
+}
+
+.fan-status.running {
+    color: green;
+}
+
+.fan-status.offline {
+    color: gray;
+}
+
+
