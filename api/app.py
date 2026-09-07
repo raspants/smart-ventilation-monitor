@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 import os
 import socket
+from mqtt import start_mqtt
 
 from db import( 
     get_connection,
@@ -62,6 +63,7 @@ def measurements(device_id):
     return jsonify(measurements), 200
 
 
+mqtt_client = start_mqtt()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)

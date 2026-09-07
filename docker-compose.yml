@@ -15,6 +15,12 @@ services:
       timeout: 3s
       retries: 10
 
+  broker:
+    image: eclipse-mosquitto:2
+    container_name: smart-vent-broker
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
   api:
     build: ./api
     container_name: smart-vent-api
@@ -25,11 +31,16 @@ services:
       DB_USER: ${POSTGRES_USER:-admin}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-admin}
       APP_VERSION: v1
+      MQTT_HOST: ${MQTT_HOST}
+      MQTT_PORT: ${MQTT_PORT}
+      MQTT_TOPIC: ${MQTT_TOPIC}
     ports:
       - "${API_PORT:-5001}:5000"
     depends_on:
       db:
         condition: service_healthy
+      broker:
+        condition: service_started
 
   dashboard:
     build: ./dashboard
@@ -39,3 +50,4 @@ services:
 
 volumes:
   postgres_data:
+  
