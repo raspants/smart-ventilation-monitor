@@ -17,6 +17,18 @@ fetch("http://localhost:5001/devices")
                     .then(measurement => {
                         const healthClass = measurement.health_status.toLowerCase();
                         const fanClass = measurement.fan_status.toLowerCase();
+
+                        const fanSpeed =  document.querySelector("#fan-speed");
+                        const fanSpeedValue = document.querySelector("#fan-speed-value");
+                        fanSpeed.value = measurement.fan_speed_setting;
+                        fanSpeedValue.textContent = `${measurement.fan_speed_setting}%`;
+                        
+                        fanSpeed.addEventListener("input", () => {
+                            fanSpeedValue.textContent = `${fanSpeed.value}%`
+                        });
+                        
+
+
                         selectedUnit.innerHTML = `
                         <p class="health-status ${healthClass}">Health status: ${measurement.health_status}</p> 
                         <p class="fan-status ${fanClass}">Fan status: ${measurement.fan_status}</p>

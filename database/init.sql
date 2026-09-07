@@ -22,6 +22,14 @@ CREATE TABLE measurements (
     FOREIGN KEY (device_id) REFERENCES devices(device_id)
 );
 
+CREATE TABLE settings (
+    device_id VARCHAR(100) PRIMARY KEY,
+    fan_speed_setting INTEGER NOT NULL,
+    measurement_interval INTEGER NOT NULL,
+
+    FOREIGN KEY (device_id) REFERENCES devices(device_id)
+);
+
 CREATE TABLE alerts (
     id BIGSERIAL PRIMARY KEY,
     device_id VARCHAR(100) NOT NULL,

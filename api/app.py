@@ -10,6 +10,7 @@ from db import(
     get_latest_measurement,
     get_measurements,
     known_device,
+    get_settings,
 )
 app = Flask(__name__)
 CORS(app)
@@ -61,6 +62,20 @@ def measurements(device_id):
     measurements = get_measurements(device_id)
 
     return jsonify(measurements), 200
+
+@app.get("/devices/<device_id>/settings")
+def settings(device_id):
+    
+    if not known_device(device_id):
+        return jsonify({"error": "unknown device"}), 404
+
+    settings = get_settings(device_id)
+
+    if settings is None:
+        return jsonify({"error": "Settings not found"}), 404
+
+    return jsonify(settings), 200
+
 
 
 mqtt_client = start_mqtt()

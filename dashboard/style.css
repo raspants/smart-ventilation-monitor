@@ -87,4 +87,8 @@ section:first-child li span {
     color: gray;
 }
 
+#fan-speed-value {
+    display: inline-block;
+    width: 40px;
+}
 

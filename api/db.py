@@ -78,4 +78,20 @@ def get_measurements(device_id):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(query, (device_id,))
             return [dict(row) for row in cur.fetchall()]
+
+def get_settings(device_id):
+    query = """
+    SELECT device_id, fan_speed_setting, measurement_interval
+    FROM settings
+    WHERE device_id = %s
+    """
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(query, (device_id,))
+            row = cur.fetchone()
+
+            if row is not None:
+                return dict(row)
+
+            return None;
             
