@@ -31,5 +31,11 @@ services:
       db:
         condition: service_healthy
 
+  dashboard:
+    build: ./dashboard
+    container_name: smart-vent-dashboard
+    ports:
+      - "${DASHBOARD_PORT:-8080}:80"
+
 volumes:
   postgres_data:
