@@ -15,13 +15,14 @@ fetch("http://localhost:5001/devices")
                 fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
                     .then(response => response.json())
                     .then(measurement => {
-                        selectedUnit.textContent = 
-                        `Temperature: ${measurement.temperature} °C
-                         Humidity: ${measurement.humidity} %
-                         Fan RPM: ${measurement.fan_speed_rpm}
-                         Fan Speed: ${measurement.fan_speed_setting} 
-                         Fan status: ${measurement.fan_status} 
-                         Health status: ${measurement.health_status} `
+                        selectedUnit.innerHTML = `
+                        <p>Health status: ${measurement.health_status}</P> 
+                        <p>Temperature: ${measurement.temperature} °C</P>
+                        <p>Humidity: ${measurement.humidity} %</P>
+                        <p>Fan RPM: ${measurement.fan_speed_rpm}</P>
+                        <p>Fan Speed: ${measurement.fan_speed_setting}</P> 
+                        <p>Fan status: ${measurement.fan_status}</P>
+                        `
                     });
             });
             
