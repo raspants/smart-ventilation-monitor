@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <title>SmartVent Monitor</title>
+    <link rel="stylesheet" href="style.css"
+    </head>
+
+    <body>
+        <h1>SMARTVENT MONITOR</h1>
+        <main>
+            <section>
+                <h2>Ventilation Units</h2>
+                <ul>
+                <!-- JS will add registered units here -->   
+                </ul>   
+
+            </section>
+
+            <section>
+                <h2>Selected unit</h2>
+                <div id="selected-unit"></div>
+            </section>
+
+            <section>
+                <h2>Settings</h2>
+                <label for="fan-speed">Fan Speed</label>
+                <input 
+                type="range" 
+                id="fan-speed"
+                min="0" 
+                max="100">
+                <label for="measurement-interval">Measurement interval</label>
+                <input 
+                type="number" 
+                id="measurement-interval"
+                min="1" 
+                max="60">
+            </section>
+
+            <section>
+                <h2>Alerts</h2>
+                <ul>
+                <!-- JS will add alerts here -->   
+                </ul>                 
+            </section>
+
+        </main>
+
+        <script src="app.js"></script>
+    </body>
+
+</html>
+
+<!--
+┌──────────────────┐ ┌─────────────────────────┐ ┌──────────────────────┐
+│ Ventilation      │ │ Selected unit           │ │ Settings             │
+│ Units            │ │                         │ │                      │
+│                  │ │ Temperature    22.4 °C │ │ Fan speed      72 %  │
+│ vent-001         │ │ Humidity       45.8 %  │ │ [────●──────]        │
+│ 🟢 Healthy       │ │ Fan speed      72 %    │ │                      │
+│ 🟢 Running       │ │ Fan RPM        1450    │ │ Measurement interval │
+│                  │ │ Fan status     Running  │ │ [ 10 ] seconds       │
+│ vent-002         │ │ Last update    10:30   │ │                      │
+│ 🟡 Warning       │ │                         │ │ [ Save settings ]    │
+│ 🟢 Running       │ └─────────────────────────┘ └──────────────────────┘
+│                  │
+│ vent-003         │ ┌─────────────────────────┐
+│ ⚫ Offline       │ │ Alerts                  │
+│ ⚫ Offline        │ │                         │
+└──────────────────┘ └─────────────────────────┘
+-->

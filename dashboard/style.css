@@ -1,0 +1,47 @@
+body {
+    margin: 0;
+    padding: 20px;
+    background-color: #121212;
+    color: white;
+}
+
+main {
+    display: flex;
+    gap: 15px;
+}
+
+
+section {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+section:first-child {
+    flex: 1;
+}
+
+section:nth-child(2) {
+    flex: 3;
+}
+
+section:first-child ul {
+    list-style: none;
+    padding: 0;
+}
+
+section:first-child li {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+section:first-child li:hover {
+    background-color: #333333;
+}
+
+section:first-child li span {
+    margin-left: 10px;
+}
