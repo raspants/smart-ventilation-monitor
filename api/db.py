@@ -103,9 +103,10 @@ def insert_measurement(data):
         humidity,
         fan_speed_setting,
         fan_speed_rpm,
-        fan_status
+        fan_status,
+        health_status
     )
-    VALUES (%s, %s, %s, %s, %s, %s)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
 
     with get_connection() as conn:
@@ -119,6 +120,6 @@ def insert_measurement(data):
                     data["fan_speed_setting"],
                     data["fan_speed_rpm"],
                     data["fan_status"],
+                    data["health_status"],
                 ),
             )
-            

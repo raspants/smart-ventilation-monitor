@@ -3,6 +3,7 @@ import paho.mqtt.client as mqtt
 import json
 from validation import validate_telemetry
 from db import known_device, insert_measurement
+from analysis import determine_health_status
 
 
 MQTT_HOST = os.getenv("MQTT_HOST", "broker")
@@ -51,6 +52,13 @@ def on_message(client, userdata, message):
     if not known_device(device_id):
         print(f"Unknown device: {device_id}", flush=True)
         return
+
+    data["health_status"] = determine_health_status(data)
+
+    print(
+        f"Health status for {device_id}: {data['health_status']}",
+        flush=True
+    )
 
     insert_measurement(data)
 
