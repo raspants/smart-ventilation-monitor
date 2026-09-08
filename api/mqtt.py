@@ -2,8 +2,9 @@ import os
 import paho.mqtt.client as mqtt
 import json
 from validation import validate_telemetry
-from db import known_device, insert_measurement
+from db import known_device, insert_measurement, insert_alert
 from analysis import determine_health_status
+from alerts import detect_alert
 
 
 MQTT_HOST = os.getenv("MQTT_HOST", "broker")
@@ -59,6 +60,15 @@ def on_message(client, userdata, message):
         f"Health status for {device_id}: {data['health_status']}",
         flush=True
     )
+
+    alert = detect_alert(data)
+
+    if alert:
+        insert_alert(alert)
+        print(
+            f"Alert created for {device_id}: {alert['reason']}",
+            flush=True
+        )
 
     insert_measurement(data)
 

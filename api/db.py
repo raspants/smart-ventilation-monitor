@@ -136,3 +136,24 @@ def insert_measurement(data):
                     data["health_status"],
                 ),
             )
+
+def insert_alert(alert):
+    query = """
+    INSERT INTO alerts (
+        device_id,
+        severity,
+        reason
+    )
+    VALUES (%s, %s, %s)
+    """
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                query,
+                (
+                    alert["device_id"],
+                    alert["severity"],
+                    alert["reason"],
+                ),
+            )
