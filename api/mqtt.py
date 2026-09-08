@@ -2,6 +2,7 @@ import os
 import paho.mqtt.client as mqtt
 import json
 from validation import validate_telemetry
+from db import known_device, insert_measurement
 
 
 MQTT_HOST = os.getenv("MQTT_HOST", "broker")
@@ -44,7 +45,17 @@ def on_message(client, userdata, message):
         return
 
     print("Telemetry validated successfully", flush=True)
-    
+
+    device_id = data["device_id"]
+
+    if not known_device(device_id):
+        print(f"Unknown device: {device_id}", flush=True)
+        return
+
+    insert_measurement(data)
+
+    print(f"Measurement stored for {device_id}", flush=True)
+
 
 def start_mqtt():
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)

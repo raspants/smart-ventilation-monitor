@@ -94,4 +94,31 @@ def get_settings(device_id):
                 return dict(row)
 
             return None;
+
+def insert_measurement(data):
+    query = """
+    INSERT INTO measurements (
+        device_id,
+        temperature,
+        humidity,
+        fan_speed_setting,
+        fan_speed_rpm,
+        fan_status
+    )
+    VALUES (%s, %s, %s, %s, %s, %s)
+    """
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                query,
+                (
+                    data["device_id"],
+                    data["temperature"],
+                    data["humidity"],
+                    data["fan_speed_setting"],
+                    data["fan_speed_rpm"],
+                    data["fan_status"],
+                ),
+            )
             
