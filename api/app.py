@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
 import socket
@@ -11,6 +11,7 @@ from db import(
     get_measurements,
     known_device,
     get_settings,
+    update_settings,
 )
 app = Flask(__name__)
 CORS(app)
@@ -75,6 +76,32 @@ def settings(device_id):
         return jsonify({"error": "Settings not found"}), 404
 
     return jsonify(settings), 200
+
+@app.put("/devices/<device_id>/settings")
+def update(device_id):
+    if not known_device(device_id):
+        return jsonify({"error": "unknown device"}), 404
+
+    data = request.get_json()
+
+    fan_speed_setting = data["fan_speed_setting"]
+    measurement_interval = data["measurement_interval"]
+
+    updated = update_settings(
+        device_id,
+        fan_speed_setting,
+        measurement_interval
+    )
+
+    if not updated:
+        return jsonify({"error": "Settings not found"}), 404
+
+    return jsonify({
+        "message": "Settings updated",
+        "device_id": device_id,
+        "fan_speed_setting": fan_speed_setting,
+        "measurement_interval": measurement_interval
+    }), 200   
 
 
 

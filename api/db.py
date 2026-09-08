@@ -93,7 +93,20 @@ def get_settings(device_id):
             if row is not None:
                 return dict(row)
 
-            return None;
+            return None
+
+def update_settings(device_id, fan_speed_setting, measurement_interval):
+    query = """
+    UPDATE settings
+    SET fan_speed_setting = %s,
+        measurement_interval = %s
+    WHERE device_id = %s;            
+    """
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(query, (fan_speed_setting, measurement_interval, device_id))
+            return cur.rowcount > 0
+    
 
 def insert_measurement(data):
     query = """
