@@ -1,6 +1,8 @@
 const unitList = document.querySelector("section:first-child ul");
 const selectedUnit = document.querySelector("#selected-unit");
+const saveSettings = document.querySelector("#save-settings");
 
+let selectedDeviceId = null;
 
 
 fetch("http://localhost:5001/devices")
@@ -12,14 +14,16 @@ fetch("http://localhost:5001/devices")
             const unit = document.createElement("li");
             unit.textContent = device.device_id;
             unit.addEventListener("click", () => {
+                selectedDeviceId = device.device_id;
+
                 fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
                     .then(response => response.json())
                     .then(measurement => {
                         const healthClass = measurement.health_status.toLowerCase();
                         const fanClass = measurement.fan_status.toLowerCase();
-
                         const fanSpeed =  document.querySelector("#fan-speed");
                         const fanSpeedValue = document.querySelector("#fan-speed-value");
+
                         fanSpeed.value = measurement.fan_speed_setting;
                         fanSpeedValue.textContent = `${measurement.fan_speed_setting}%`;
                         
@@ -27,8 +31,6 @@ fetch("http://localhost:5001/devices")
                             fanSpeedValue.textContent = `${fanSpeed.value}%`
                         });
                         
-
-
                         selectedUnit.innerHTML = `
                         <p class="health-status ${healthClass}">Health status: ${measurement.health_status}</p> 
                         <p class="fan-status ${fanClass}">Fan status: ${measurement.fan_status}</p>
@@ -39,6 +41,28 @@ fetch("http://localhost:5001/devices")
                         `
                     });
             });
+
+            saveSettings.addEventListener("click", () => {
+                if (selectedDeviceId === null) { 
+                    return;
+                }
+
+                const fanSpeed =  document.querySelector("#fan-speed").value; 
+                const measurementInterval = document.querySelector("#measurement-interval").value; 
+
+                fetch(`http://localhost:5001/devices/${selectedDeviceId}/settings`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        fan_speed_setting: Number(fanSpeed),
+                        measurement_interval: Number(measurementInterval)
+                    })
+                })
+            });
+
+
             
             const health = document.createElement("span")
 
