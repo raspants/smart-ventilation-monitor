@@ -1,6 +1,9 @@
 const unitList = document.querySelector("section:first-child ul");
 const selectedUnit = document.querySelector("#selected-unit");
 const saveSettings = document.querySelector("#save-settings");
+const fanSpeed = document.querySelector("#fan-speed");
+const measurementInterval = document.querySelector("#measurement-interval");
+const fanSpeedValue = document.querySelector("#fan-speed-value");
 
 let selectedDeviceId = null;
 
@@ -23,20 +26,14 @@ fetch("http://localhost:5001/devices")
                             .then(response => response.json())
                             .then(settings => {
                             
-                            const fanSpeed =  document.querySelector("#fan-speed"); 
-                            const measurementInterval = document.querySelector("#measurement-interval");
-                            
                             fanSpeed.value = settings.fan_speed_setting;
+                            fanSpeedValue.textContent = `${settings.fan_speed_setting}%`;
                             measurementInterval.value = settings.measurement_interval;
                             });
 
                         const healthClass = measurement.health_status.toLowerCase();
                         const fanClass = measurement.fan_status.toLowerCase();
-                        const fanSpeed =  document.querySelector("#fan-speed");
-                        const fanSpeedValue = document.querySelector("#fan-speed-value");
-
-                        fanSpeed.value = measurement.fan_speed_setting;
-                        fanSpeedValue.textContent = `${measurement.fan_speed_setting}%`;
+                       
                         
                         fanSpeed.addEventListener("input", () => {
                             fanSpeedValue.textContent = `${fanSpeed.value}%`
@@ -53,28 +50,7 @@ fetch("http://localhost:5001/devices")
                     });
             });
 
-            saveSettings.addEventListener("click", () => {
-                if (selectedDeviceId === null) { 
-                    return;
-                }
 
-                const fanSpeed =  document.querySelector("#fan-speed").value; 
-                const measurementInterval = document.querySelector("#measurement-interval").value; 
-
-                fetch(`http://localhost:5001/devices/${selectedDeviceId}/settings`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        fan_speed_setting: Number(fanSpeed),
-                        measurement_interval: Number(measurementInterval)
-                    })
-                })
-            });
-
-
-            
             const health = document.createElement("span")
 
             let emoji;
@@ -129,3 +105,24 @@ fetch("http://localhost:5001/devices")
             
         });
     });
+
+
+saveSettings.addEventListener("click", () => {
+    if (selectedDeviceId === null) { 
+        return;
+    }
+
+    const fanSpeed =  document.querySelector("#fan-speed").value; 
+    const measurementInterval = document.querySelector("#measurement-interval").value; 
+
+    fetch(`http://localhost:5001/devices/${selectedDeviceId}/settings`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            fan_speed_setting: Number(fanSpeed),
+            measurement_interval: Number(measurementInterval)
+        })
+    });
+});
