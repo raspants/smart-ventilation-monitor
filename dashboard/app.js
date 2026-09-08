@@ -19,6 +19,17 @@ fetch("http://localhost:5001/devices")
                 fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
                     .then(response => response.json())
                     .then(measurement => {
+                        fetch(`http://localhost:5001/devices/${device.device_id}/settings`)
+                            .then(response => response.json())
+                            .then(settings => {
+                            
+                            const fanSpeed =  document.querySelector("#fan-speed"); 
+                            const measurementInterval = document.querySelector("#measurement-interval");
+                            
+                            fanSpeed.value = settings.fan_speed_setting;
+                            measurementInterval.value = settings.measurement_interval;
+                            });
+
                         const healthClass = measurement.health_status.toLowerCase();
                         const fanClass = measurement.fan_status.toLowerCase();
                         const fanSpeed =  document.querySelector("#fan-speed");
