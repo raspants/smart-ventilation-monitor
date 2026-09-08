@@ -14,6 +14,7 @@ from db import(
     known_device,
     get_settings,
     update_settings,
+    get_alerts,
 )
 app = Flask(__name__)
 CORS(app)
@@ -103,7 +104,17 @@ def update(device_id):
         "device_id": device_id,
         "fan_speed_setting": fan_speed_setting,
         "measurement_interval": measurement_interval
-    }), 200   
+    }), 200  
+
+@app.get("/devices/<device_id>/alerts")
+def alerts(device_id):
+
+    if not known_device(device_id):
+        return jsonify({"error": "unknown device"}), 404
+    
+    alerts = get_alerts(device_id)
+    return jsonify(alerts), 200
+
 
 
 

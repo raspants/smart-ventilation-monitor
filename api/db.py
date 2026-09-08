@@ -183,3 +183,15 @@ def mark_offline_devices(timeout_seconds):
         with conn.cursor() as cur:
             cur.execute(query, (timeout_seconds,))
             return cur.rowcount
+
+def get_alerts(device_id):
+    query = """
+    SELECT id, device_id, severity, reason, created_at
+    FROM alerts
+    WHERE device_id = %s
+    ORDER BY created_at DESC
+    """ 
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(query, (device_id,))
+            return [dict(row) for row in cur.fetchall()]
