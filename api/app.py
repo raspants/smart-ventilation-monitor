@@ -3,6 +3,8 @@ from flask_cors import CORS
 import os
 import socket
 from mqtt import start_mqtt
+from offline import start_offline_monitor
+
 
 from db import( 
     get_connection,
@@ -106,6 +108,7 @@ def update(device_id):
 
 
 mqtt_client = start_mqtt()
+offline_thread = start_offline_monitor()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)

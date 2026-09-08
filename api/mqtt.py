@@ -2,7 +2,7 @@ import os
 import paho.mqtt.client as mqtt
 import json
 from validation import validate_telemetry
-from db import known_device, insert_measurement, insert_alert
+from db import known_device, insert_measurement, insert_alert, update_device_status
 from analysis import determine_health_status
 from alerts import detect_alert
 
@@ -60,6 +60,11 @@ def on_message(client, userdata, message):
         f"Health status for {device_id}: {data['health_status']}",
         flush=True
     )
+
+    update_device_status(
+    device_id,
+    data["health_status"]
+)
 
     alert = detect_alert(data)
 

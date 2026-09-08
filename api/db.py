@@ -157,3 +157,29 @@ def insert_alert(alert):
                     alert["reason"],
                 ),
             )
+
+def update_device_status(device_id, status):
+    query = """
+    UPDATE devices
+    SET status = %s,
+        last_seen = NOW()
+    WHERE device_id = %s
+    """
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query, (status, device_id))
+
+def mark_offline_devices(timeout_seconds):
+    query = """
+    UPDATE devices
+    SET status = 'OFFLINE'
+    WHERE last_seen IS NOT NULL
+      AND last_seen < NOW() - (%s * INTERVAL '1 second')
+      AND status != 'OFFLINE'
+    """
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(query, (timeout_seconds,))
+            return cur.rowcount
