@@ -18,37 +18,55 @@ fetch("http://localhost:5001/devices")
             unit.textContent = device.device_id;
             unit.addEventListener("click", () => {
                 selectedDeviceId = device.device_id;
-
-                fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
+    
+                fetch(`http://localhost:5001/devices/${device.device_id}/alerts`)
                     .then(response => response.json())
-                    .then(measurement => {
-                        fetch(`http://localhost:5001/devices/${device.device_id}/settings`)
-                            .then(response => response.json())
-                            .then(settings => {
-                            
-                            fanSpeed.value = settings.fan_speed_setting;
-                            fanSpeedValue.textContent = `${settings.fan_speed_setting}%`;
-                            measurementInterval.value = settings.measurement_interval;
-                            });
-
-                        const healthClass = measurement.health_status.toLowerCase();
-                        const fanClass = measurement.fan_status.toLowerCase();
-                       
-                        
-                        fanSpeed.addEventListener("input", () => {
-                            fanSpeedValue.textContent = `${fanSpeed.value}%`
-                        });
-                        
-                        selectedUnit.innerHTML = `
-                        <p class="health-status ${healthClass}">Health status: ${measurement.health_status}</p> 
-                        <p class="fan-status ${fanClass}">Fan status: ${measurement.fan_status}</p>
-                        <p>Temperature: ${measurement.temperature} °C</p>
-                        <p>Humidity: ${measurement.humidity} %</p>
-                        <p>Fan RPM: ${measurement.fan_speed_rpm}</p>
-                        <p>Fan Speed: ${measurement.fan_speed_setting}</p> 
-                        `
+                    .then(alerts => {
+                        console.log("Alerts:", alerts);
                     });
+
+fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
+    .then(response => {
+        if (!response.ok) {
+            selectedUnit.innerHTML = `
+                <p>No measurements available for this unit.</p>
+            `;
+            return null;
+        }
+
+        return response.json();
+    })
+    .then(measurement => {
+        if (measurement === null) {
+            return;
+        }
+
+        fetch(`http://localhost:5001/devices/${device.device_id}/settings`)
+            .then(response => response.json())
+            .then(settings => {
+                fanSpeed.value = settings.fan_speed_setting;
+                fanSpeedValue.textContent = `${settings.fan_speed_setting}%`;
+                measurementInterval.value = settings.measurement_interval;
             });
+
+        const healthClass = measurement.health_status.toLowerCase();
+        const fanClass = measurement.fan_status.toLowerCase();
+
+        fanSpeed.addEventListener("input", () => {
+            fanSpeedValue.textContent = `${fanSpeed.value}%`;
+        });
+
+        selectedUnit.innerHTML = `
+            <p class="health-status ${healthClass}">Health status: ${measurement.health_status}</p>
+            <p class="fan-status ${fanClass}">Fan status: ${measurement.fan_status}</p>
+            <p>Temperature: ${measurement.temperature} °C</p>
+            <p>Humidity: ${measurement.humidity} %</p>
+            <p>Fan RPM: ${measurement.fan_speed_rpm}</p>
+            <p>Fan Speed: ${measurement.fan_speed_setting}</p>
+        `;
+    });
+    });
+
 
 
             const health = document.createElement("span")
