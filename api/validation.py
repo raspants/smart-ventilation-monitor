@@ -4,6 +4,8 @@ def validate_telemetry(data):
     device_id = data.get("device_id")
     temperature = data.get("temperature")
     humidity = data.get("humidity")
+    fan_speed_rpm = data.get("fan_speed_rpm")
+    fan_status = data.get("fan_status")
 
     if not isinstance(device_id, str) or not device_id.strip():
         errors.append("device_id must be a non-empty string")
@@ -12,14 +14,7 @@ def validate_telemetry(data):
         errors.append("temperature must be a number")
 
     if not isinstance(humidity, (int, float)):
-        errors.apend("humidity must be a number")
-
-    fan_speed_setting = data.get("fan_speed_setting")
-    fan_speed_rpm = data.get("fan_speed_rpm")
-    fan_status = data.get("fan_status")
-
-    if not isinstance(fan_speed_setting, int):
-        errors.append("fan_speed_setting must be an integer")
+        errors.append("humidity must be a number")
 
     if not isinstance(fan_speed_rpm, (int, float)):
         errors.append("fan_speed_rpm must be a number")

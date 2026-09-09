@@ -2,7 +2,7 @@ import os
 import paho.mqtt.client as mqtt
 import json
 from validation import validate_telemetry
-from db import known_device, insert_measurement, insert_alert, update_device_status
+from db import known_device, insert_measurement, insert_alert, update_device_status, get_settings
 from analysis import determine_health_status
 from alerts import detect_alert
 
@@ -49,12 +49,20 @@ def on_message(client, userdata, message):
     print("Telemetry validated successfully", flush=True)
 
     device_id = data["device_id"]
-
+    
     if not known_device(device_id):
         print(f"Unknown device: {device_id}", flush=True)
         return
 
-    data["health_status"] = determine_health_status(data)
+    settings = get_settings(device_id)
+
+    if settings is None:
+        print(f"No settings found for device {device_id}", flush=True)
+        return
+
+    data["fan_speed_setting"] = settings["fan_speed_setting"]
+
+    data["health_status"] = determine_health_status(data, settings)
 
     print(
         f"Health status for {device_id}: {data['health_status']}",
