@@ -48,29 +48,38 @@ fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
             return;
         }
 
+        const healthClass = measurement.health_status.toLowerCase();
+        const fanClass = measurement.fan_status.toLowerCase();
+        
         fetch(`http://localhost:5001/devices/${device.device_id}/settings`)
             .then(response => response.json())
             .then(settings => {
                 fanSpeed.value = settings.fan_speed_setting;
                 fanSpeedValue.textContent = `${settings.fan_speed_setting}%`;
                 measurementInterval.value = settings.measurement_interval;
+
+                selectedUnit.innerHTML = `
+                    <p class="health-status ${healthClass}">Health status: ${measurement.health_status}</p>
+                    <p class="fan-status ${fanClass}">Fan status: ${measurement.fan_status}</p>
+                    <p>Temperature: ${measurement.temperature} °C</p>
+                    <p>Humidity: ${measurement.humidity} %</p>
+                    <p>Fan RPM: ${measurement.fan_speed_rpm}</p>
+                    <p>Fan Speed: ${measurement.fan_speed_setting}</p>
+                    
+                    <p>Temperature: ${settings.target_temperature} °C</p>
+                    <p>Humidity: ${settings.target_humidity} %</p>
+                    <p>Fan RPM: ${settings.target_rpm}</p>
+
+                `;
             });
 
-        const healthClass = measurement.health_status.toLowerCase();
-        const fanClass = measurement.fan_status.toLowerCase();
+
 
         fanSpeed.addEventListener("input", () => {
             fanSpeedValue.textContent = `${fanSpeed.value}%`;
         });
 
-        selectedUnit.innerHTML = `
-            <p class="health-status ${healthClass}">Health status: ${measurement.health_status}</p>
-            <p class="fan-status ${fanClass}">Fan status: ${measurement.fan_status}</p>
-            <p>Temperature: ${measurement.temperature} °C</p>
-            <p>Humidity: ${measurement.humidity} %</p>
-            <p>Fan RPM: ${measurement.fan_speed_rpm}</p>
-            <p>Fan Speed: ${measurement.fan_speed_setting}</p>
-        `;
+        
     });
     });
 
