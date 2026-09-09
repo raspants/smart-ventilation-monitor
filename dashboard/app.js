@@ -4,6 +4,7 @@ const saveSettings = document.querySelector("#save-settings");
 const fanSpeed = document.querySelector("#fan-speed");
 const measurementInterval = document.querySelector("#measurement-interval");
 const fanSpeedValue = document.querySelector("#fan-speed-value");
+const alertsList = document.querySelector("#alerts-list")
 
 let selectedDeviceId = null;
 
@@ -22,7 +23,13 @@ fetch("http://localhost:5001/devices")
                 fetch(`http://localhost:5001/devices/${device.device_id}/alerts`)
                     .then(response => response.json())
                     .then(alerts => {
-                        console.log("Alerts:", alerts);
+                        alertsList.innerHTML = "";
+
+                        alerts.forEach(alert => {
+                            const item = document.createElement("li");
+                            item.textContent = `${alert.severity}: ${alert.reason}`;
+                            alertsList.appendChild(item);
+                        });
                     });
 
 fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
