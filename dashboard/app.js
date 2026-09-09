@@ -66,9 +66,9 @@ fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
                     <p>Fan RPM: ${measurement.fan_speed_rpm}</p>
                     <p>Fan Speed: ${measurement.fan_speed_setting}</p>
                     
-                    <p>Temperature: ${settings.target_temperature} °C</p>
-                    <p>Humidity: ${settings.target_humidity} %</p>
-                    <p>Fan RPM: ${settings.target_rpm}</p>
+                    <p>Target temperature: ${settings.target_temperature} °C</p>
+                    <p>Target humidity: ${settings.target_humidity} %</p>
+                    <p>Target RPM: ${settings.target_rpm}</p>
 
                 `;
             });

@@ -1,9 +1,14 @@
-def detect_alert(data):
+def detect_alert(data, settings):
+    alerts = []
+
     if data["health_status"] == "CRITICAL":
-        return {
+        alerts.append({
             "device_id": data["device_id"],
             "severity": "CRITICAL",
-            "reason": "Critical ventilation condition detected",
-        }
+            "reason": f"Fan is running but no RPM is {data['fan_speed_rpm']}",
 
-    return None
+    })
+ 
+    
+
+    return alerts
