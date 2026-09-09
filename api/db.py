@@ -81,7 +81,12 @@ def get_measurements(device_id):
 
 def get_settings(device_id):
     query = """
-    SELECT device_id, fan_speed_setting, measurement_interval
+    SELECT device_id, 
+    fan_speed_setting, 
+    measurement_interval,
+    target_temperature,
+    target_humidity,
+    target_rpm
     FROM settings
     WHERE device_id = %s
     """
@@ -91,7 +96,15 @@ def get_settings(device_id):
             row = cur.fetchone()
 
             if row is not None:
-                return dict(row)
+                row = dict(row)
+
+                if isinstance(row["target_temperature"], Decimal):
+                    row["target_temperature"] = float(row["target_temperature"])
+
+                if isinstance(row["target_humidity"], Decimal):
+                    row["target_humidity"] = float(row["target_humidity"])
+
+                return row
 
             return None
 

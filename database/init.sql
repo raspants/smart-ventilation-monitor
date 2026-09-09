@@ -26,6 +26,9 @@ CREATE TABLE settings (
     device_id VARCHAR(100) PRIMARY KEY,
     fan_speed_setting INTEGER NOT NULL,
     measurement_interval INTEGER NOT NULL,
+    target_temperature NUMERIC(5,2) NOT NULL,
+    target_humidity NUMERIC(5,2) NOT NULL,
+    target_rpm INTEGER NOT NULL,
 
     FOREIGN KEY (device_id) REFERENCES devices(device_id)
 );
