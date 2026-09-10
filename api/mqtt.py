@@ -74,9 +74,9 @@ def on_message(client, userdata, message):
     data["health_status"]
 )
 
-    alert = detect_alert(data)
+    alerts = detect_alert(data, settings)
 
-    if alert:
+    for alert in alerts:
         insert_alert(alert)
         print(
             f"Alert created for {device_id}: {alert['reason']}",
