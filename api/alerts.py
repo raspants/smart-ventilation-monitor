@@ -10,6 +10,13 @@ def detect_alert(data, settings):
         data["fan_status"]
     )
 
+    for sensor in invalid_sensors:
+        alerts.append({
+            "device_id": data["device_id"],
+            "severity": "CRITICAL",
+            "reason": f"{sensor} sensor is invalid"
+            })
+
     if data["fan_status"] == "running" and data["fan_speed_rpm"] == 0:
         alerts.append({
             "device_id": data["device_id"],
