@@ -1,4 +1,4 @@
-from analysis import has_invalid_sensor_data
+from analysis import has_invalid_sensor_data, within_tolerance
 
 def detect_alert(data, settings):
     alerts = []
@@ -23,6 +23,17 @@ def detect_alert(data, settings):
             "severity": "CRITICAL",
             "reason": f"Fan is running but RPM is {data['fan_speed_rpm']}"
     })
+
+    if "temperature" not in invalid_sensors and not within_tolerance(
+        data["temperature"],
+        settings["target_temperature"],
+        0.10
+    ):
+        alerts.append({
+            "device_id": data["device_id"],
+            "severity": "WARNING",
+            "reason": f"Temperature is {data['temperature']}°C, target is {settings['target_temperature']}°C"           
+        })
  
     
     
