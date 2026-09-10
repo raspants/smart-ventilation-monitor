@@ -34,6 +34,17 @@ def detect_alert(data, settings):
             "severity": "WARNING",
             "reason": f"Temperature is {data['temperature']}°C, target is {settings['target_temperature']}°C"           
         })
+
+    if "humidity" not in invalid_sensors and not within_tolerance(
+        data["humidity"],
+        settings["target_humidity"],
+        0.15
+    ):
+        alerts.append({
+            "device_id": data["device_id"],
+            "severity": "WARNING",
+            "reason": f"Humidity is {data['humidity']}%, target is {settings['target_humidity']}%"           
+        })
  
     
     
