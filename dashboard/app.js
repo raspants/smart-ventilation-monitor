@@ -27,7 +27,13 @@ fetch("http://localhost:5001/devices")
 
                         alerts.forEach(alert => {
                             const item = document.createElement("li");
-                            item.textContent = `${alert.severity}: ${alert.reason}`;
+                            
+                            const time = new Date(alert.created_at).toLocaleString("sv-SE", {
+                                dateStyle: "short",
+                                timeStyle: "short"
+                            });
+
+                            item.textContent = `${time} | ${alert.severity}: ${alert.reason}`;
                             alertsList.appendChild(item);
                         });
                     });
