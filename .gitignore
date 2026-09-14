@@ -1,4 +1,6 @@
 .venv
+.pio-venv/
 .env
 .pio/
 sdkconfig.*
+
