@@ -9,9 +9,14 @@ static const char *TAG = "MQTT";
 
 static const char *DEVICE_ID = "vent-01";
 static const char *COMMAND_TOPIC = "smartvent/vent-01/command";
+static const char *TELEMETRY_TOPIC = "smartvent/vent-01/telemetry";
+
+static esp_mqtt_client_handle_t mqtt_client = nullptr;
 
 static int fan_speed_setting = 0;
 static int measurement_interval = 5;
+
+static void publish_telemetry();
 
 static void mqtt_event_handler(
     void *handler_args,
@@ -32,6 +37,9 @@ static void mqtt_event_handler(
             1);
 
         ESP_LOGI(TAG, "Subscribed to %s", COMMAND_TOPIC);
+
+        publish_telemetry();
+
         break;
 
     case MQTT_EVENT_DISCONNECTED:
@@ -113,14 +121,33 @@ void mqtt_start()
     mqtt_cfg.broker.address.uri =
         "mqtt://host.wokwi.internal:1883";
 
-    esp_mqtt_client_handle_t client =
-        esp_mqtt_client_init(&mqtt_cfg);
+    mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
 
     esp_mqtt_client_register_event(
-        client,
+        mqtt_client,
         MQTT_EVENT_ANY,
         mqtt_event_handler,
         nullptr);
 
-    esp_mqtt_client_start(client);
+    esp_mqtt_client_start(mqtt_client);
+}
+
+static void publish_telemetry()
+{
+    const char *payload =
+        "{\"device_id\":\"vent-01\","
+        "\"temperature\":22.0,"
+        "\"humidity\":45.0,"
+        "\"fan_speed_rpm\":1200,"
+        "\"fan_status\":\"running\"}";
+
+    esp_mqtt_client_publish(
+        mqtt_client,
+        TELEMETRY_TOPIC,
+        payload,
+        0,
+        1,
+        0);
+
+    ESP_LOGI(TAG, "Published telemetry");
 }
