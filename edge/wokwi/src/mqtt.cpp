@@ -33,6 +33,20 @@ static void mqtt_event_handler(
         ESP_LOGW(TAG, "Disconnected from MQTT broker");
         break;
 
+    case MQTT_EVENT_DATA:
+        ESP_LOGI(
+            TAG,
+            "Topic: %.*s",
+            event->topic_len,
+            event->topic);
+
+        ESP_LOGI(
+            TAG,
+            "Payload: %.*s",
+            event->data_len,
+            event->data);
+        break;
+
     default:
         break;
     }
