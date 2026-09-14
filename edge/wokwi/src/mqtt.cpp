@@ -31,4 +31,20 @@ static void mqtt_event_handler(
 void mqtt_start()
 {
     ESP_LOGI(TAG, "Starting MQTT client...");
+
+    esp_mqtt_client_config_t mqtt_cfg = {};
+
+    mqtt_cfg.broker.address.uri =
+        "mqtt://host.wokwi.internal:1883";
+
+    esp_mqtt_client_handle_t client =
+        esp_mqtt_client_init(&mqtt_cfg);
+
+    esp_mqtt_client_register_event(
+        client,
+        MQTT_EVENT_ANY,
+        mqtt_event_handler,
+        nullptr);
+
+    esp_mqtt_client_start(client);
 }

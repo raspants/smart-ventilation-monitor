@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "mqtt.hpp"
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "freertos/task.h"
@@ -33,6 +35,8 @@ static void wifi_event_handler(
     {
         ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
         ESP_LOGI(TAG, "Got IP address: " IPSTR, IP2STR(&event->ip_info.ip));
+
+        mqtt_start();
     }
 }
 
@@ -54,18 +58,14 @@ extern "C" void app_main()
             WIFI_EVENT,
             ESP_EVENT_ANY_ID,
             &wifi_event_handler,
-            nullptr
-        )
-    );
+            nullptr));
 
     ESP_ERROR_CHECK(
         esp_event_handler_register(
             IP_EVENT,
             IP_EVENT_STA_GOT_IP,
             &wifi_event_handler,
-            nullptr
-        )
-    );
+            nullptr));
 
     wifi_config_t wifi_config = {};
 
@@ -73,8 +73,7 @@ extern "C" void app_main()
         (char *)wifi_config.sta.ssid,
         sizeof(wifi_config.sta.ssid),
         "%s",
-        WIFI_SSID
-    );
+        WIFI_SSID);
 
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
