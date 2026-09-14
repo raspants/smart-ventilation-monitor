@@ -5,6 +5,9 @@
 
 static const char *TAG = "MQTT";
 
+static const char *DEVICE_ID = "vent-01";
+static const char *COMMAND_TOPIC = "smartvent/vent-01/command";
+
 static void mqtt_event_handler(
     void *handler_args,
     esp_event_base_t base,
@@ -17,6 +20,13 @@ static void mqtt_event_handler(
     {
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "Connected to MQTT broker");
+
+        esp_mqtt_client_subscribe(
+            event->client,
+            COMMAND_TOPIC,
+            1);
+
+        ESP_LOGI(TAG, "Subscribed to %s", COMMAND_TOPIC);
         break;
 
     case MQTT_EVENT_DISCONNECTED:
