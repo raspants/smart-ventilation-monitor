@@ -16,6 +16,8 @@ static const char *TELEMETRY_TOPIC = "smartvent/vent-01/telemetry";
 static esp_mqtt_client_handle_t mqtt_client = nullptr;
 static TaskHandle_t telemetry_task_handle = nullptr;
 
+static bool mqtt_connected = false;
+
 static int fan_speed_setting = 0;
 static int measurement_interval = 5;
 
@@ -62,6 +64,8 @@ static void mqtt_event_handler(
     switch (event->event_id)
     {
     case MQTT_EVENT_CONNECTED:
+        mqtt_connected = true;
+
         ESP_LOGI(TAG, "Connected to MQTT broker");
 
         esp_mqtt_client_subscribe(
@@ -87,6 +91,8 @@ static void mqtt_event_handler(
         break;
 
     case MQTT_EVENT_DISCONNECTED:
+        mqtt_connected = false;
+
         ESP_LOGW(TAG, "Disconnected from MQTT broker");
         break;
 
@@ -178,6 +184,12 @@ static void mqtt_event_handler(
 
 void mqtt_start()
 {
+    if (mqtt_client != nullptr)
+    {
+        ESP_LOGI(TAG, "MQTT client already initialized");
+        return;
+    }
+
     ESP_LOGI(TAG, "Starting MQTT client...");
 
     esp_mqtt_client_config_t mqtt_cfg = {};
@@ -200,11 +212,14 @@ static void telemetry_task(void *parameter)
 {
     while (true)
     {
-        mqtt_publish_telemetry(
-            22.0,
-            45.0,
-            1200,
-            "running");
+        if (mqtt_connected)
+        {
+            mqtt_publish_telemetry(
+                22.0,
+                45.0,
+                1200,
+                "running");
+        }
 
         vTaskDelay(
             pdMS_TO_TICKS(measurement_interval * 1000));
