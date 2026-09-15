@@ -19,7 +19,36 @@ static TaskHandle_t telemetry_task_handle = nullptr;
 static int fan_speed_setting = 0;
 static int measurement_interval = 5;
 
-static void publish_telemetry();
+void mqtt_publish_telemetry(
+    float temperature,
+    float humidity,
+    int fan_speed_rpm,
+    const char *fan_status)
+{
+    cJSON *root = cJSON_CreateObject();
+
+    cJSON_AddStringToObject(root, "device_id", DEVICE_ID);
+    cJSON_AddNumberToObject(root, "temperature", temperature);
+    cJSON_AddNumberToObject(root, "humidity", humidity);
+    cJSON_AddNumberToObject(root, "fan_speed_rpm", fan_speed_rpm);
+    cJSON_AddStringToObject(root, "fan_status", fan_status);
+
+    char *payload = cJSON_PrintUnformatted(root);
+
+    esp_mqtt_client_publish(
+        mqtt_client,
+        TELEMETRY_TOPIC,
+        payload,
+        0,
+        1,
+        0);
+
+    ESP_LOGI(TAG, "Published telemetry: %s", payload);
+
+    free(payload);
+    cJSON_Delete(root);
+}
+
 static void telemetry_task(void *parameter);
 
 static void mqtt_event_handler(
@@ -167,31 +196,15 @@ void mqtt_start()
     esp_mqtt_client_start(mqtt_client);
 }
 
-static void publish_telemetry()
-{
-    const char *payload =
-        "{\"device_id\":\"vent-01\","
-        "\"temperature\":22.0,"
-        "\"humidity\":45.0,"
-        "\"fan_speed_rpm\":1200,"
-        "\"fan_status\":\"running\"}";
-
-    esp_mqtt_client_publish(
-        mqtt_client,
-        TELEMETRY_TOPIC,
-        payload,
-        0,
-        1,
-        0);
-
-    ESP_LOGI(TAG, "Published telemetry");
-}
-
 static void telemetry_task(void *parameter)
 {
     while (true)
     {
-        publish_telemetry();
+        mqtt_publish_telemetry(
+            22.0,
+            45.0,
+            1200,
+            "running");
 
         vTaskDelay(
             pdMS_TO_TICKS(measurement_interval * 1000));
