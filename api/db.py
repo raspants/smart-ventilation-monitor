@@ -3,6 +3,27 @@ from decimal import Decimal
 import psycopg2
 import psycopg2.extras
 
+def create_device(device_id, name):
+    query_device = """
+    INSERT INTO devices (device_id, name)
+    VALUES (%s, %s);    
+    """
+    query_settings = """
+    INSERT INTO settings (
+    "device_id",
+    "fan_speed_setting",
+    "measurement_interval",
+    "target_temperature",
+    "target_humidity",
+    "target_rpm")
+    VALUES (%s, 0, 6, 22.0, 45.0, 1450)   
+    """
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(query_device, (device_id, name))
+            cur.execute(query_settings, (device_id,))
+            return cur.rowcount > 0
+
 
 def get_connection():
     return psycopg2.connect(
