@@ -4,6 +4,8 @@
 #include "mqtt_client.h"
 
 #include "cJSON.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 static const char *TAG = "MQTT";
 
@@ -12,11 +14,13 @@ static const char *COMMAND_TOPIC = "smartvent/vent-01/command";
 static const char *TELEMETRY_TOPIC = "smartvent/vent-01/telemetry";
 
 static esp_mqtt_client_handle_t mqtt_client = nullptr;
+static TaskHandle_t telemetry_task_handle = nullptr;
 
 static int fan_speed_setting = 0;
 static int measurement_interval = 5;
 
 static void publish_telemetry();
+static void telemetry_task(void *parameter);
 
 static void mqtt_event_handler(
     void *handler_args,
@@ -38,7 +42,18 @@ static void mqtt_event_handler(
 
         ESP_LOGI(TAG, "Subscribed to %s", COMMAND_TOPIC);
 
-        publish_telemetry();
+        if (telemetry_task_handle == nullptr)
+        {
+            xTaskCreate(
+                telemetry_task,
+                "telemetry_task",
+                4096,
+                nullptr,
+                5,
+                &telemetry_task_handle);
+
+            ESP_LOGI(TAG, "Telemetry task started");
+        }
 
         break;
 
@@ -150,4 +165,15 @@ static void publish_telemetry()
         0);
 
     ESP_LOGI(TAG, "Published telemetry");
+}
+
+static void telemetry_task(void *parameter)
+{
+    while (true)
+    {
+        publish_telemetry();
+
+        vTaskDelay(
+            pdMS_TO_TICKS(measurement_interval * 1000));
+    }
 }
