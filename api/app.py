@@ -15,6 +15,7 @@ from db import(
     get_settings,
     update_settings,
     get_alerts,
+    create_device,
 )
 app = Flask(__name__)
 CORS(app)
@@ -114,6 +115,14 @@ def alerts(device_id):
     
     alerts = get_alerts(device_id)
     return jsonify(alerts), 200
+
+@app.route("/devices", methods=["POST"])
+def add_device():
+    data = request.get_json()
+    create_device(data["device_id"], data["name"])
+
+    return jsonify({"Unit": "Successfully created"}), 201
+
 
 
 
