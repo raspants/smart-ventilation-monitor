@@ -102,12 +102,32 @@ static void mqtt_event_handler(
 
         if (cJSON_IsNumber(fan_speed))
         {
-            fan_speed_setting = fan_speed->valueint;
+            int new_fan_speed = fan_speed->valueint;
+
+            if (new_fan_speed >= 0)
+            {
+                fan_speed_setting = new_fan_speed;
+                ESP_LOGI(TAG, "Fan speed setting updated to %d", fan_speed_setting);
+            }
+            else
+            {
+                ESP_LOGW(TAG, "Invalid fan speed setting: %d", new_fan_speed);
+            }
         }
 
         if (cJSON_IsNumber(interval))
         {
-            measurement_interval = interval->valueint;
+            int new_interval = interval->valueint;
+
+            if (new_interval > 0)
+            {
+                measurement_interval = new_interval;
+                ESP_LOGI(TAG, "Measurement interval updated to %d", measurement_interval);
+            }
+            else
+            {
+                ESP_LOGW(TAG, "Invalid measurement interval: %d", new_interval);
+            }
         }
 
         ESP_LOGI(
