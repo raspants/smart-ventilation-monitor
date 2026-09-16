@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>SmartVent Monitor</title>
     <link rel="stylesheet" href="style.css"
-    <meta http-equiv="refresh" content="5">
     </head>
 
     <body>
@@ -12,9 +11,14 @@
         <main>
             <section>
                 <h2>Ventilation Units</h2>
-                <ul>
+                <ul id="units-list">
                 <!-- JS will add registered units here -->   
                 </ul>   
+                <h3>Add ventilation unit</h3>
+                <label for="unit-name">Unit name</label>
+                <input type="text" id="unit-name">
+
+                <button id="add-unit">Add unit</button>
 
             </section>
 

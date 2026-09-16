@@ -69,6 +69,7 @@ def get_devices():
     query = """
     SELECT device_id, status, lifecycle_status
     FROM devices
+    WHERE lifecycle_status = 'ACTIVE'
     ORDER BY device_id
     """
     with get_connection() as conn:
