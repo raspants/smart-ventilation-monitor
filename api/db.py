@@ -3,7 +3,13 @@ from decimal import Decimal
 import psycopg2
 import psycopg2.extras
 
-def create_device(device_id, name):
+def create_device(name):
+    query = """
+    SELECT device_id
+    FROM devices
+    ORDER BY device_id DESC
+    LIMIT 1
+    """ 
     query_device = """
     INSERT INTO devices (device_id, name)
     VALUES (%s, %s);    
@@ -20,6 +26,18 @@ def create_device(device_id, name):
     """
     with get_connection() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(query)
+            row = cur.fetchone()
+            if row is None:
+                device_id = "vent-001"
+            else:
+                last_device = row["device_id"].split("-")
+                number = int(last_device[1]) + 1
+                number = f"{number:03d}"
+                last_device[1] = number
+                device_id = "-".join(last_device)
+
+
             cur.execute(query_device, (device_id, name))
             cur.execute(query_settings, (device_id,))
             return cur.rowcount > 0
@@ -49,7 +67,7 @@ def known_device(device_id):
 
 def get_devices():
     query = """
-    SELECT device_id, status
+    SELECT device_id, status, lifecycle_status
     FROM devices
     ORDER BY device_id
     """

@@ -119,7 +119,7 @@ def alerts(device_id):
 @app.route("/devices", methods=["POST"])
 def add_device():
     data = request.get_json()
-    create_device(data["device_id"], data["name"])
+    create_device(data["name"])
 
     return jsonify({"Unit": "Successfully created"}), 201
 
