@@ -12,6 +12,18 @@ public:
     esp_err_t init();
     bool isConnected() const;
 
+    esp_err_t publish(
+        const char* topic,
+        const char* payload,
+        int qos = 1,
+        bool retain = false
+    );
+
+    esp_err_t subscribe(
+        const char* topic,
+        int qos = 1
+    );
+
 private:
 
     static void eventHandler(
