@@ -66,11 +66,24 @@ def known_device(device_id):
     
 
 def get_devices():
+
     query = """
-    SELECT device_id, name, status, lifecycle_status
-    FROM devices
-    WHERE lifecycle_status = 'ACTIVE'
-    ORDER BY device_id
+    SELECT
+        d.device_id,
+        d.name,
+        d.status,
+        d.lifecycle_status,
+        m.fan_status
+    FROM devices d
+    LEFT JOIN LATERAL (
+        SELECT fan_status
+        FROM measurements
+        WHERE device_id = d.device_id
+        ORDER BY created_at DESC
+        LIMIT 1
+    ) m ON TRUE
+    WHERE d.lifecycle_status = 'ACTIVE'
+    ORDER BY d.device_id
     """
     with get_connection() as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:

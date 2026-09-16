@@ -122,39 +122,28 @@ function loadDevices(){
 
                 unit.appendChild(health);
 
-                fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
-                    .then(response => {
-                        if (!response.ok) {
-                            return null;
-                        }
+                const fanStatus = document.createElement("span");
 
-                        return response.json();
-                    })
-                    .then(measurement => {
-                        if(measurement === null){
-                            return;
-                        }
-                        console.log(measurement);
+                let fanEmoji;
 
-                        const fanStatus = document.createElement("span");
-        
-                        let emoji;
+                switch (device.fan_status) {
+                    case "running":
+                        fanEmoji = "🟢";
+                        fanText = "Running";
+                        break;
+                    case "stopped":
+                        fanEmoji = "⚫";
+                        fanText = "Stopped";
+                        break;
+                    default:
+                        fanEmoji = "⚪";
+                        fanText = "No data";
+                        break;
+                }
 
-                        switch (measurement.fan_status) {
-                            case "running":
-                                emoji = "🟢";
-                                fanText = "Running";
-                                break;
-                            case "stopped":
-                                emoji = "⚫";
-                                fanText = "Stopped";
-                                break;
-                        }
-                        
-                        fanStatus.textContent = `${emoji} ${fanText}`;
+                fanStatus.textContent = `${fanEmoji} ${fanText}`;
 
-                        unit.appendChild(fanStatus);
-                    });
+                unit.appendChild(fanStatus);
 
                 unitList.appendChild(unit);
 
