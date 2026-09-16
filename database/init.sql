@@ -3,6 +3,8 @@ CREATE TABLE devices (
     device_id VARCHAR(100) UNIQUE NOT NULL,
     name VARCHAR(100),
     status VARCHAR(20) NOT NULL DEFAULT 'OFFLINE',
+    lifecycle_status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE'
+        CHECK (lifecycle_status in ('ACTIVE', 'OUT_OF_SERVICE')),
     last_seen TIMESTAMPTZ
 );
 
