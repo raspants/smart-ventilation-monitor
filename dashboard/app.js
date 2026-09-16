@@ -158,8 +158,30 @@ function loadDevices(){
 
                 unitList.appendChild(unit);
 
-                
+                if (selectedDeviceId !== null){
+                    if (selectedDeviceId === device.device_id) {
+                        fetch(`http://localhost:5001/devices/${selectedDeviceId}/latest`)
+                        .then(response => response.json())
+                        .then(measurement => {
+                            console.log("refreshing selected unit:", selectedDeviceId);
+                            console.log(measurement);
+
+                            const healthClass = measurement.health_status.toLowerCase();
+                            const fanClass = measurement.fan_status.toLowerCase();
+
+                            selectedUnit.innerHTML = `
+                                <p class="health-status ${healthClass}">Health status: ${measurement.health_status}</p>
+                                <p class="fan-status ${fanClass}">Fan status: ${measurement.fan_status}</p>
+                                <p>Temperature: ${measurement.temperature} °C</p>
+                                <p>Humidity: ${measurement.humidity} %</p>
+                                <p>Fan RPM: ${measurement.fan_speed_rpm}</p>
+                                <p>Fan Speed: ${measurement.fan_speed_setting}</p>
+                            `;
+                        })
+                    }
+                }
             });
+
         });
 }
 
