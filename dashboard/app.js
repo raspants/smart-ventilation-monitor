@@ -19,7 +19,10 @@ function loadDevices(){
                 console.log(device.device_id);
                 
                 const unit = document.createElement("li");
-                unit.textContent = device.device_id;
+                if (device.device_id === selectedDeviceId){
+                    unit.classList.add("selected");
+                }
+                unit.textContent = `${device.device_id} - ${device.name}`;
                 unit.addEventListener("click", () => {
                     selectedDeviceId = device.device_id;
         
@@ -120,8 +123,17 @@ function loadDevices(){
                 unit.appendChild(health);
 
                 fetch(`http://localhost:5001/devices/${device.device_id}/latest`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            return null;
+                        }
+
+                        return response.json();
+                    })
                     .then(measurement => {
+                        if(measurement === null){
+                            return;
+                        }
                         console.log(measurement);
 
                         const fanStatus = document.createElement("span");
@@ -133,9 +145,9 @@ function loadDevices(){
                                 emoji = "🟢";
                                 fanText = "Running";
                                 break;
-                            case "offline":
+                            case "stopped":
                                 emoji = "⚫";
-                                fanText = "Offline";
+                                fanText = "Stopped";
                                 break;
                         }
                         

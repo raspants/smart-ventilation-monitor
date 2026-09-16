@@ -67,7 +67,7 @@ def known_device(device_id):
 
 def get_devices():
     query = """
-    SELECT device_id, status, lifecycle_status
+    SELECT device_id, name, status, lifecycle_status
     FROM devices
     WHERE lifecycle_status = 'ACTIVE'
     ORDER BY device_id
