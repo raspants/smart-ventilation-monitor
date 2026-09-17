@@ -1,4 +1,5 @@
 #include "mqtt.hpp"
+#include "simulation.h"
 
 #include "esp_log.h"
 #include "mqtt_client.h"
@@ -17,9 +18,6 @@ static esp_mqtt_client_handle_t mqtt_client = nullptr;
 static TaskHandle_t telemetry_task_handle = nullptr;
 
 static bool mqtt_connected = false;
-
-static int fan_speed_setting = 0;
-static int measurement_interval = 5;
 
 void mqtt_publish_telemetry(
     float temperature,
@@ -135,14 +133,16 @@ static void mqtt_event_handler(
         cJSON *interval =
             cJSON_GetObjectItem(root, "measurement_interval");
 
+        SimulationSettings settings = simulation_get_settings();
+
         if (cJSON_IsNumber(fan_speed))
         {
             int new_fan_speed = fan_speed->valueint;
 
             if (new_fan_speed >= 0)
             {
-                fan_speed_setting = new_fan_speed;
-                ESP_LOGI(TAG, "Fan speed setting updated to %d", fan_speed_setting);
+                settings.fan_speed_setting = new_fan_speed;
+                ESP_LOGI(TAG, "Fan speed setting updated to %d", settings.fan_speed_setting);
             }
             else
             {
@@ -156,8 +156,8 @@ static void mqtt_event_handler(
 
             if (new_interval > 0)
             {
-                measurement_interval = new_interval;
-                ESP_LOGI(TAG, "Measurement interval updated to %d", measurement_interval);
+                settings.measurement_interval = new_interval;
+                ESP_LOGI(TAG, "Measurement interval updated to %d", settings.measurement_interval);
             }
             else
             {
@@ -165,11 +165,13 @@ static void mqtt_event_handler(
             }
         }
 
+        simulation_set_settings(settings);
+
         ESP_LOGI(
             TAG,
             "Updated settings: fan_speed=%d, interval=%d",
-            fan_speed_setting,
-            measurement_interval);
+            settings.fan_speed_setting,
+            settings.measurement_interval);
 
         cJSON_Delete(root);
         free(payload);
@@ -212,16 +214,20 @@ static void telemetry_task(void *parameter)
 {
     while (true)
     {
+        SimulationSettings settings = simulation_get_settings();
+
         if (mqtt_connected)
         {
+            DeviceState state = simulation_get_state();
+
             mqtt_publish_telemetry(
-                22.0,
-                45.0,
-                1200,
-                "running");
+                state.temperature,
+                state.humidity,
+                state.fan_speed_rpm,
+                state.fan_running ? "running" : "stopped");
         }
 
         vTaskDelay(
-            pdMS_TO_TICKS(measurement_interval * 1000));
+            pdMS_TO_TICKS(settings.measurement_interval * 1000));
     }
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "mqtt.hpp"
+#include "simulation.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
@@ -43,6 +44,8 @@ static void wifi_event_handler(
 extern "C" void app_main()
 {
     printf("SmartVent ESP32 started\n");
+
+    simulation_init();
 
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());

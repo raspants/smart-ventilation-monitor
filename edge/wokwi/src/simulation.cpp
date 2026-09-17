@@ -17,7 +17,6 @@ void simulation_init()
 
 void simulation_update()
 {
-    
 }
 
 DeviceState simulation_get_state()
@@ -25,8 +24,13 @@ DeviceState simulation_get_state()
     return state;
 }
 
-void simulation_set_settings(const SimulationSettings& new_settings)
-{ 
+SimulationSettings simulation_get_settings()
+{
+    return settings;
+}
+
+void simulation_set_settings(const SimulationSettings &new_settings)
+{
     settings = new_settings;
     state.fan_speed_setting = settings.fan_speed_setting;
 }
