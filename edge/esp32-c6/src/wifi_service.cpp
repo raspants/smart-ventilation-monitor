@@ -1,5 +1,6 @@
 #include "wifi_service.h"
 #include "config.h"
+#include "secrets.h"
 
 #include <cstring>
 
