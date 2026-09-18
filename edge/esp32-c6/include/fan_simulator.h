@@ -12,6 +12,8 @@ public:
 
     FanState getState() const;
 
+    
+
 private:
 
     FanState state_;

@@ -36,13 +36,13 @@ esp_err_t WiFiService::init()
 
     std::strncpy(
         reinterpret_cast<char*>(config.sta.ssid),
-        Config::WIFI_SSID,
+        Secrets::WIFI_SSID,
         sizeof(config.sta.ssid)
     );
 
     std::strncpy(
         reinterpret_cast<char*>(config.sta.password),
-        Config::WIFI_PASSWORD,
+        Secrets::WIFI_PASSWORD,
         sizeof(config.sta.password)
     );
 
