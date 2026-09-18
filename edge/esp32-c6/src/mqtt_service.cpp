@@ -1,8 +1,14 @@
 #include "mqtt_service.h"
 
+#include "models.h"
+#include "queues.h"
+#include "config.h"
+
+#include <cJSON.h>
+
+#include "freertos/queue.h"
 #include "esp_log.h"
 
-#include "config.h"
 
 static const char* TAG = "[MQTT_SERVICE]";
 
@@ -76,17 +82,64 @@ void MqttService::eventHandler(
         {
             ESP_LOGI(TAG, "MQTT message received");
 
-            ESP_LOGI(TAG,
-                "topic: %.*s",
-                event->topic_len,
-                event->topic
+            ESP_LOGI(TAG, "topic: %.*s",
+                     event->topic_len,
+                     event->topic
             );
 
-            ESP_LOGI(TAG,
-                "Payload: %.*s",
-                event->data_len,
-                event->data
-            );
+            cJSON* root = 
+                cJSON_ParseWithLength(
+                    event->data,
+                    event->data_len
+                );
+
+            if (root == nullptr)
+            {
+                ESP_LOGE(TAG, "Invalid command JSON");
+                break;
+            }
+
+            cJSON* fanSpeed =
+                cJSON_GetObjectItem(
+                    root,
+                    "fan_speed_setting"
+                );
+
+            cJSON* measurementInterval =
+                cJSON_GetObjectItem(
+                    root,
+                    "measurement_interval"
+                );
+
+            if (!cJSON_IsNumber(fanSpeed) || !cJSON_IsNumber(measurementInterval))
+            {
+                ESP_LOGE(TAG, "Command contains invalid fields");
+                cJSON_Delete(root);
+                break;
+            }
+            
+            DeviceCommand command{
+                .fanSpeedSetting =
+                    static_cast<uint8_t>(
+                        measurementInterval->valueint
+                    ),
+                
+                .measurementIntervalMs =
+                    static_cast<uint32_t>(
+                        measurementInterval->valueint
+                    )
+            };
+
+            if (xQueueSend(
+                    commandQueue,
+                    &command,
+                    0) != pdTRUE)
+            {
+                ESP_LOGW(TAG, "Command queue full, command dropped");
+            }
+
+            cJSON_Delete(root);
+
             break;
         }
         default:

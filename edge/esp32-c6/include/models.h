@@ -17,9 +17,9 @@ struct SensorReading
 };
 
 
-struct FanCommand
+struct DeviceCommand
 {
-    uint8_t speedPercent = 0;
+    uint8_t fanSpeedSetting = 0;
     uint32_t measurementIntervalMs = 5000;
 };
 

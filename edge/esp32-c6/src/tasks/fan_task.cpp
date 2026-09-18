@@ -14,25 +14,25 @@ void fanSimulationTask(void* parameter)
     auto* fanSimulator =
         static_cast<FanSimulator*>(parameter);
     
-    FanCommand command{};
+    DeviceCommand command{};
 
     while (true)
     {
         if (xQueueReceive(
-                fanCommandQueue,
+                commandQueue,
                 &command,
                 portMAX_DELAY) == pdTRUE)
         {
-            fanSimulator->setSpeed(command.speedPercent);
+            fanSimulator->setSpeed(command.fanSpeedSetting);
 
             ESP_LOGI(TAG,
                      "Fan config updated: speed=%u%% interval=%lu ms",
-                     command.speedPercent,
+                     command.fanSpeedSetting,
                      command.measurementIntervalMs
             );
 
             while (xQueueReceive(
-                    fanCommandQueue,
+                    commandQueue,
                     &command,
                     pdMS_TO_TICKS(command.measurementIntervalMs))
                     != pdTRUE)
@@ -49,7 +49,7 @@ void fanSimulationTask(void* parameter)
             }
         }
 
-        fanSimulator->setSpeed(command.speedPercent);
+        fanSimulator->setSpeed(command.fanSpeedSetting);
     }
 }
 

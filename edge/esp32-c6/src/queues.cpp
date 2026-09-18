@@ -5,14 +5,14 @@
 
 static const char* TAG = "[QUEUES]";
 
-QueueHandle_t fanCommandQueue = nullptr;
+QueueHandle_t commandQueue = nullptr;
 QueueHandle_t telemetryQueue = nullptr;
 
-esp_err_t startFanCommandQueue()
+esp_err_t startCommandQueue()
 {
-    fanCommandQueue = xQueueCreate(5, sizeof(FanCommand));
+    commandQueue = xQueueCreate(5, sizeof(DeviceCommand));
 
-    if (fanCommandQueue == nullptr)
+    if (commandQueue == nullptr)
     {
         return ESP_ERR_NO_MEM;
     }

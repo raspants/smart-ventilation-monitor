@@ -12,6 +12,7 @@
 
 #include "./tasks/sensor_task.h"
 #include "./tasks/telemetry_task.h"
+#include "./tasks/command_task.h"
 
 #include "config.h"
 
@@ -38,6 +39,7 @@ extern "C" void app_main()
 
     ESP_LOGI(TAG, "Starting SmartVent edge");
 
+    //============ NVS =====================
     esp_err_t ret = nvs_flash_init();
 
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
@@ -49,23 +51,22 @@ extern "C" void app_main()
 
     ESP_ERROR_CHECK(ret);
 
-    ESP_ERROR_CHECK(startFanCommandQueue());
+    //============ QUEUES ==================
+    ESP_ERROR_CHECK(startCommandQueue());
     ESP_ERROR_CHECK(startTelemetryQueue());
 
+    //============ HARDWARE ================
     ESP_ERROR_CHECK(sht30.init());
+
+    //============ TASKS ===================
 
     ESP_ERROR_CHECK(startSensorTask(&sht30));
     ESP_ERROR_CHECK(startTelemetryTask(&telemetryContext));
+    ESP_ERROR_CHECK(startCommandTask(&fanSimulator));
 
-    // float temperature = 0.0f;
-    // float humidity = 0.0f;
-
-    // ESP_ERROR_CHECK(sht30.read(temperature, humidity));
-
-
+    //============ COMMUNICATION ===========
     ESP_ERROR_CHECK(wifi.init());
     ESP_ERROR_CHECK(mqtt.init());
-
     
     ESP_LOGI(TAG, "SmartVent initialized");
 
@@ -92,11 +93,4 @@ extern "C" void app_main()
     );
 #endif    
 
-    
-    // NVS
-    // Wi-Fi
-    // MQTT
-    // Sensor
-    // Queues
-    // FreeRTOS tasks
 }
