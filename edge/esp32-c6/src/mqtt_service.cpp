@@ -55,6 +55,28 @@ void MqttService::eventHandler(
         {
             self->connected_ = true;
             ESP_LOGI(TAG, "MQTT connected");
+
+            int messageId = esp_mqtt_client_subscribe(
+                self->client_,
+                Config::MQTT_COMMAND_TOPIC,
+                1
+            );
+
+            if (messageId < 0)
+            {
+                ESP_LOGE(TAG, "Failed to subscribe to %s",
+                         Config::MQTT_COMMAND_TOPIC
+                );
+
+            } else {
+
+                ESP_LOGI(TAG, "Subscription requested, topic=%s, id=%d",
+                         Config::MQTT_COMMAND_TOPIC,
+                         messageId
+                );
+            }
+
+
             break;
         }
         case MQTT_EVENT_DISCONNECTED:
@@ -121,7 +143,7 @@ void MqttService::eventHandler(
             DeviceCommand command{
                 .fanSpeedSetting =
                     static_cast<uint8_t>(
-                        measurementInterval->valueint
+                        fanSpeed->valueint
                     ),
                 
                 .measurementIntervalMs =

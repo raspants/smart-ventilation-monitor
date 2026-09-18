@@ -4,6 +4,8 @@
 #include "models.h"
 #include "queues.h"
 
+#include "./tasks/sensor_task.h"
+
 #include "esp_log.h"
 
 #include "freertos/FreeRTOS.h"
@@ -28,7 +30,7 @@ void commandTask(void* parameter)
                      command.fanSpeedSetting,
                      static_cast<unsigned long>(
                         command.measurementIntervalMs
-                     )
+                     ) * 1000U
             );
 
             fanSimulator->setSpeed(command.fanSpeedSetting);
@@ -41,6 +43,21 @@ void commandTask(void* parameter)
                      state.speedPercent,
                      state.rpm,
                      state.running ? "true" : "false"
+            );
+        }
+
+        if (sensorTaskHandle != nullptr)
+        {
+            xTaskNotify(
+                sensorTaskHandle,
+                command.measurementIntervalMs,
+                eSetValueWithOverwrite
+            );
+
+            ESP_LOGI(TAG, "Sensor interval changed to %lu ms",
+                     static_cast<unsigned long>(
+                        command.measurementIntervalMs * 1000U
+                     )
             );
         }
     }
