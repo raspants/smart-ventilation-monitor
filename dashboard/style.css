@@ -6,10 +6,25 @@ body {
 }
 
 main {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr;
     gap: 15px;
 }
 
+section:first-child {
+    grid-column: 1;
+}
+
+section:last-child {
+    grid-column: 3;
+}
+
+.middle-column {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
 
 section {
     background-color: #1e1e1e;
@@ -43,7 +58,9 @@ section:first-child li:hover {
 }
 
 section:first-child li span {
-    margin-left: 10px;
+    display: block;
+    margin-left: 0;
+    margin-top: 5px;
 }
 
 #selected-unit p {

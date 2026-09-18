@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
 import socket
+import json
 from mqtt import start_mqtt
 from offline import start_offline_monitor
 
@@ -100,6 +101,13 @@ def update(device_id):
     if not updated:
         return jsonify({"error": "Settings not found"}), 404
 
+    mqtt_client.publish(
+        f"smartvent/{device_id}/command",
+        json.dumps({
+            "fan_speed_setting": fan_speed_setting,
+            "measurement_interval": measurement_interval
+        })
+    )
     return jsonify({
         "message": "Settings updated",
         "device_id": device_id,

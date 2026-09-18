@@ -10,9 +10,9 @@
 
 static const char *TAG = "MQTT";
 
-static const char *DEVICE_ID = "vent-01";
-static const char *COMMAND_TOPIC = "smartvent/vent-01/command";
-static const char *TELEMETRY_TOPIC = "smartvent/vent-01/telemetry";
+static const char *DEVICE_ID = "vent-001";
+static const char *COMMAND_TOPIC = "smartvent/vent-001/command";
+static const char *TELEMETRY_TOPIC = "smartvent/vent-001/telemetry";
 
 static esp_mqtt_client_handle_t mqtt_client = nullptr;
 static TaskHandle_t telemetry_task_handle = nullptr;
@@ -218,6 +218,8 @@ static void telemetry_task(void *parameter)
 
         if (mqtt_connected)
         {
+            simulation_update();
+            
             DeviceState state = simulation_get_state();
 
             mqtt_publish_telemetry(

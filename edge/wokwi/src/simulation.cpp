@@ -2,6 +2,7 @@
 
 static DeviceState state;
 static SimulationSettings settings;
+const int MAX_RPM = 1450;
 
 void simulation_init()
 {
@@ -17,6 +18,13 @@ void simulation_init()
 
 void simulation_update()
 {
+    state.fan_speed_rpm = settings.fan_speed_setting * MAX_RPM / 100;
+    if (state.fan_speed_rpm > 0) {
+        state.fan_running = true;
+    }else {
+        state.fan_running = false;
+    }
+
 }
 
 DeviceState simulation_get_state()

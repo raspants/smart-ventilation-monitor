@@ -12,48 +12,50 @@
             <section>
                 <h2>Ventilation Units</h2>
                 <ul id="units-list">
-                <!-- JS will add registered units here -->   
-                </ul>   
+                    <!-- JS will add registered units here -->
+                </ul>
+
                 <h3>Add ventilation unit</h3>
                 <label for="unit-name">Unit name</label>
                 <input type="text" id="unit-name">
-
                 <button id="add-unit">Add unit</button>
-
             </section>
 
-            <section>
-                <h2>Selected unit</h2>
-                <div id="selected-unit">
-    
-                </div>
-            </section>
+            <div class="middle-column">
 
-            <section>
-                <h2>Settings</h2>
-                <label for="fan-speed">Fan Speed</label>
-                <input 
-                type="range" 
-                id="fan-speed"
-                min="0" 
-                max="100">
-                <span id="fan-speed-value">0%</span>
+                <section>
+                    <h2>Settings</h2>
+                    <label for="fan-speed">Fan Speed</label>
+                    <input 
+                        type="range" 
+                        id="fan-speed"
+                        min="0" 
+                        max="100">
+                    <span id="fan-speed-value">0%</span>
 
-                <label for="measurement-interval">Measurement interval</label>
-                <input 
-                type="number" 
-                id="measurement-interval"
-                min="1" 
-                max="60">
+                    <label for="measurement-interval">Measurement interval</label>
+                    <input 
+                        type="number" 
+                        id="measurement-interval"
+                        min="1" 
+                        max="60">
 
-                <button id="save-settings">Save settings</button>
-            </section>
+                    <button id="save-settings">Save settings</button>
+                </section>
+
+                <section>
+                    <h2>Selected unit</h2>
+                    <div id="selected-unit">
+                    </div>
+                </section>
+
+            </div>
 
             <section>
                 <h2>Alerts</h2>
                 <ul id="alerts-list">
-                <!-- JS will add alerts here -->   
-                </ul>                 
+                    <!-- JS will add alerts here -->
+                </ul>
             </section>
 
         </main>

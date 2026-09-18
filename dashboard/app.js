@@ -158,14 +158,30 @@ function loadDevices(){
                             const healthClass = measurement.health_status.toLowerCase();
                             const fanClass = measurement.fan_status.toLowerCase();
 
-                            selectedUnit.innerHTML = `
-                                <p class="health-status ${healthClass}">Health status: ${measurement.health_status}</p>
-                                <p class="fan-status ${fanClass}">Fan status: ${measurement.fan_status}</p>
-                                <p>Temperature: ${measurement.temperature} °C</p>
-                                <p>Humidity: ${measurement.humidity} %</p>
-                                <p>Fan RPM: ${measurement.fan_speed_rpm}</p>
-                                <p>Fan Speed: ${measurement.fan_speed_setting}</p>
-                            `;
+                            fetch(`http://localhost:5001/devices/${selectedDeviceId}/settings`)
+                                .then(response => response.json())
+                                .then(settings => {
+                                    console.log("settings:", settings)
+
+                                    fanSpeed.value = settings.fan_speed_setting;
+                                    fanSpeedValue.textContent = `${settings.fan_speed_setting}%`;
+                                    measurementInterval.value = settings.measurement_interval;
+
+                                
+
+                                    selectedUnit.innerHTML = `
+                                        <p class="health-status ${healthClass}">Health status: ${measurement.health_status}</p>
+                                        <p class="fan-status ${fanClass}">Fan status: ${measurement.fan_status}</p>
+                                        <p>Temperature: ${measurement.temperature} °C</p>
+                                        <p>Humidity: ${measurement.humidity} %</p>
+                                        <p>Fan RPM: ${measurement.fan_speed_rpm}</p>
+                                        <p>Fan Speed: ${measurement.fan_speed_setting}</p>
+                                        <p>Target temperature: ${settings.target_temperature} °C</p>
+                                        <p>Target humidity: ${settings.target_humidity} %</p>
+                                        <p>Target RPM: ${settings.target_rpm}</p>
+                                    `;
+                                });
+
                         })
                     }
                 }
@@ -194,6 +210,7 @@ addUnit.addEventListener("click", () => {
         })
     })
      .then(() =>{
+        document.querySelector("#unit-name").value = "";
         loadDevices()
     }); 
 
