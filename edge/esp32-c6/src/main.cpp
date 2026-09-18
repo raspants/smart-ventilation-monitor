@@ -8,18 +8,21 @@
 #include "mqtt_service.h"
 #include "fan_simulator.h"
 #include "queues.h"
+#include "sht30_driver.h"
 
 #include "config.h"
+
 
 #ifdef MQTT_TEST 1
 #include "../test/test_config.h"
 #endif
 
-static const char* TAG = "Main";
+static const char* TAG = "[MAIN]";
 
 static WiFiService wifi;
 static MqttService mqtt;
 static FanSimulator fanSimulator;
+static SHT30Driver sht30;
 
 
 extern "C" void app_main() 
@@ -39,6 +42,14 @@ extern "C" void app_main()
     ESP_ERROR_CHECK(ret);
 
     ESP_ERROR_CHECK(startFanCommandQueue());
+
+    ESP_ERROR_CHECK(sht30.init());
+
+    float temperature = 0.0f;
+    float humidity = 0.0f;
+
+    ESP_ERROR_CHECK(sht30.read(temperature, humidity));
+
 
     ESP_ERROR_CHECK(wifi.init());
     ESP_ERROR_CHECK(mqtt.init());

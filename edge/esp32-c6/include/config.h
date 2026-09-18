@@ -1,5 +1,7 @@
 #pragma once
 
+#include "driver/gpio.h"
+
 // =============================
 // Tests
 // =============================
@@ -20,6 +22,8 @@ namespace Config
         
     constexpr char MQTT_BROKER_URI[] = "mqtt://192.168.0.2:1883";
 
+    constexpr gpio_num_t I2C_SDA_PIN = GPIO_NUM_4;
+    constexpr gpio_num_t I2C_SCL_PIN = GPIO_NUM_7;
 
 }
 

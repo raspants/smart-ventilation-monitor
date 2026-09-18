@@ -44,8 +44,9 @@ void fanSimulationTask(void* parameter)
                     "Fan measurement: speed=%u%% rpm=%u running=%s",
                     state.speedPercent,
                     state.rpm,
-                    state.running ? "true" : "false")
-            };
+                    state.running ? "true" : "false"
+                );
+            }
         }
 
         fanSimulator->setSpeed(command.speedPercent);

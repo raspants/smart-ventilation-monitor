@@ -4,7 +4,7 @@
 
 #include "config.h"
 
-static const char* TAG = "MqttService";
+static const char* TAG = "[MQTT_SERVICE]";
 
 esp_err_t MqttService::init()
 {

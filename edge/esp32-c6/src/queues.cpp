@@ -3,7 +3,7 @@
 
 #include "esp_log.h"
 
-static const char* TAG = "QUEUES";
+static const char* TAG = "[QUEUES]";
 
 QueueHandle_t fanCommandQueue = nullptr;
 
