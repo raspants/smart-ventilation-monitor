@@ -16,6 +16,7 @@ public:
 
 private:
 
-    FanState state_;
+    static constexpr uint16_t MAX_RPM = 2400;
+    FanState state_{};
 
 };

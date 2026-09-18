@@ -80,10 +80,10 @@ esp_err_t SHT30Driver::init()
 
 }
 
-esp_err_t SHT30Driver::read(
-    float& temperature,
-    float& humidity)
+esp_err_t SHT30Driver::read(SensorReading& reading)
 {
+    reading.valid = false;
+
     uint8_t command[2] = {
         0x24,
         0x00
@@ -104,7 +104,7 @@ esp_err_t SHT30Driver::read(
         return err;
     }
 
-    ESP_LOGI(TAG, "Measurement command sent");
+    // ESP_LOGI(TAG, "Measurement command sent");
 
     vTaskDelay(pdMS_TO_TICKS(50));
 
@@ -125,27 +125,27 @@ esp_err_t SHT30Driver::read(
         return err;
     }
 
-    ESP_LOGI(TAG, "Raw data: %02X %02X %02X %02X %02X %02X",
-             data[0],
-             data[1],
-             data[2],
-             data[3],
-             data[4],
-             data[5]
-    );
+    // ESP_LOGI(TAG, "Raw data: %02X %02X %02X %02X %02X %02X",
+    //          data[0],
+    //          data[1],
+    //          data[2],
+    //          data[3],
+    //          data[4],
+    //          data[5]
+    // );
 
     uint8_t temperatureCrc = calculateCrc(&data[0], 2);
     uint8_t humidityCrc = calculateCrc(&data[3], 2);
 
-    ESP_LOGI(TAG, "Temperature CRC: calculated=0x%02X received=0x%02X",
-             temperatureCrc,
-             data[2]
-    );
+    // ESP_LOGI(TAG, "Temperature CRC: calculated=0x%02X received=0x%02X",
+    //          temperatureCrc,
+    //          data[2]
+    // );
 
-    ESP_LOGI(TAG, "Humidity CRC: calculated=0x%02X received=0x%02X",
-             humidityCrc,
-             data[5]
-    );
+    // ESP_LOGI(TAG, "Humidity CRC: calculated=0x%02X received=0x%02X",
+    //          humidityCrc,
+    //          data[5]
+    // );
 
     if (temperatureCrc != data[2])
     {
@@ -167,19 +167,21 @@ esp_err_t SHT30Driver::read(
         (static_cast<uint16_t>(data[3]) << 8) |
         data[4];
 
-    humidity = 
+    reading.humidity = 
         100.0f *
         static_cast<float>(rawHumidity) /
         65535.0f;
 
-    temperature = 
+    reading.temperature = 
         -45.0f +
         (175.0f *
          static_cast<float>(rawTemperature) /
          65535.0f);
 
-    ESP_LOGI(TAG, "Humidity: %.2f %%RH", humidity);
-    ESP_LOGI(TAG, "Temperature: %.2f C", temperature);
+    reading.valid = true;
+
+    // ESP_LOGI(TAG, "Humidity: %.2f %%RH", reading.humidity);
+    // ESP_LOGI(TAG, "Temperature: %.2f C", reading.temperature);
 
     return ESP_OK;
 

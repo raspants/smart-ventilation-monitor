@@ -1,5 +1,7 @@
 #pragma once
 
+#include "models.h"
+
 #include "esp_err.h"
 #include "driver/i2c_master.h"
 
@@ -8,7 +10,7 @@ class SHT30Driver
 public:
 
     esp_err_t init();
-    esp_err_t read(float& temperature, float& humidity);
+    esp_err_t read(SensorReading& reading);
 
 private:
 

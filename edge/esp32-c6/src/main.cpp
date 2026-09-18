@@ -10,6 +10,9 @@
 #include "queues.h"
 #include "sht30_driver.h"
 
+#include "./tasks/sensor_task.h"
+#include "./tasks/telemetry_task.h"
+
 #include "config.h"
 
 
@@ -23,6 +26,11 @@ static WiFiService wifi;
 static MqttService mqtt;
 static FanSimulator fanSimulator;
 static SHT30Driver sht30;
+
+TelemeteryTaskContext telemetryContext{
+    .mqtt = &mqtt,
+    .fanSimulator = &fanSimulator
+};
 
 
 extern "C" void app_main() 
@@ -42,13 +50,17 @@ extern "C" void app_main()
     ESP_ERROR_CHECK(ret);
 
     ESP_ERROR_CHECK(startFanCommandQueue());
+    ESP_ERROR_CHECK(startTelemetryQueue());
 
     ESP_ERROR_CHECK(sht30.init());
 
-    float temperature = 0.0f;
-    float humidity = 0.0f;
+    ESP_ERROR_CHECK(startSensorTask(&sht30));
+    ESP_ERROR_CHECK(startTelemetryTask(&telemetryContext));
 
-    ESP_ERROR_CHECK(sht30.read(temperature, humidity));
+    // float temperature = 0.0f;
+    // float humidity = 0.0f;
+
+    // ESP_ERROR_CHECK(sht30.read(temperature, humidity));
 
 
     ESP_ERROR_CHECK(wifi.init());
