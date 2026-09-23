@@ -53,7 +53,7 @@ void sensorTask(void* parameter)
             pdMS_TO_TICKS(measurementIntervalMs)
             ) == pdTRUE)
         {
-            measurementIntervalMs = newIntervalMs * 1000U;
+            measurementIntervalMs = newIntervalMs;
 
             ESP_LOGI(TAG, "Measurement interval updated to %lu ms",
                      static_cast<unsigned long>(

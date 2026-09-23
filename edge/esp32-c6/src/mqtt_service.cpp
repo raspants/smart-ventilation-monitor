@@ -149,7 +149,7 @@ void MqttService::eventHandler(
                 .measurementIntervalMs =
                     static_cast<uint32_t>(
                         measurementInterval->valueint
-                    )
+                    ) * 1000U
             };
 
             if (xQueueSend(

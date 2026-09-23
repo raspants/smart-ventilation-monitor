@@ -5,6 +5,7 @@
 #include "queues.h"
 
 #include "./tasks/sensor_task.h"
+#include "./tasks/fan_hw_task.h"
 
 #include "esp_log.h"
 
@@ -36,6 +37,14 @@ void commandTask(void* parameter)
             fanSimulator->setSpeed(command.fanSpeedSetting);
 
             fanSimulator->update();
+
+            if (fanTaskHandle != nullptr)
+            {
+                xTaskNotify(fanTaskHandle,
+                            command.fanSpeedSetting,
+                            eSetValueWithOverwrite
+                );
+            }
 
             FanState state = fanSimulator->getState();
 

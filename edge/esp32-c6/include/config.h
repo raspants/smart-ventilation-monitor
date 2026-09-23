@@ -15,7 +15,7 @@
 namespace Config
 {    
     
-    #define DEVICE_ID "vent-01"
+    #define DEVICE_ID "vent-002"
 
     constexpr char MQTT_COMMAND_TOPIC[] = "smartvent/" DEVICE_ID "/command";
     constexpr char MQTT_TELEMETRY_TOPIC[] = "smartvent/" DEVICE_ID "/telemetry"; 
@@ -24,6 +24,8 @@ namespace Config
 
     constexpr gpio_num_t I2C_SDA_PIN = GPIO_NUM_4;
     constexpr gpio_num_t I2C_SCL_PIN = GPIO_NUM_7;
+
+    constexpr gpio_num_t MOTOR_PIN = GPIO_NUM_22;
 
 }
 
